@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const http = require("http");
+const morgan = require("morgan");
 
 dotenv.config();
 
@@ -14,6 +15,10 @@ const app = express();
 
 const api = require("./api");
 const main = require("./main");
+
+if (NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 
 app.use("/api", api);
 app.use("/", main);
