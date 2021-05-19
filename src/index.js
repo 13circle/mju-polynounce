@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const http = require("http");
 const morgan = require("morgan");
+const path = require("path");
 
 dotenv.config();
 
@@ -18,6 +19,8 @@ const routes = require("./routes");
 if (NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+
+app.use("/static", express.static(path.resolve("src", "static")));
 
 app.use("/", routes);
 
