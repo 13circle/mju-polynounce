@@ -14,14 +14,12 @@ if (!NODE_ENV) {
 const app = express();
 
 const routes = require("./routes");
-const main = require("./main");
 
 if (NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-app.use("/routes", routes);
-app.use("/", main);
+app.use("/", routes);
 
 const port = PORT || 3000;
 
