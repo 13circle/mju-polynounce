@@ -1,27 +1,15 @@
-const path = require("path");
-
 const authCtrl = {};
 
 authCtrl.loginPage = (req, res) => {
-  res
-    .status(200)
-    .sendFile(
-      path.resolve(__dirname, "..", "..", "view", "auth", "login.html")
-    );
+  res.status(200).render("auth/login.html");
 };
 
 authCtrl.editPage = (req, res) => {
-  res
-    .status(200)
-    .sendFile(path.resolve(__dirname, "..", "..", "view", "auth", "edit.html"));
+  res.status(200).render("auth/edit.html");
 };
 
 authCtrl.registrationPage = (req, res) => {
-  res
-    .status(200)
-    .sendFile(
-      path.resolve(__dirname, "..", "..", "view", "auth", "register.html")
-    );
+  res.status(200).render("auth/register.html");
 };
 
 authCtrl.login = (req, res) => {

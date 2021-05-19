@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const http = require("http");
 const morgan = require("morgan");
 const path = require("path");
+const ejs = require("ejs");
 
 dotenv.config();
 
@@ -19,6 +20,10 @@ const routes = require("./routes");
 if (NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+
+app.set("views", path.resolve(__dirname, "view"));
+app.set("view engine", "ejs");
+app.engine("html", ejs.renderFile);
 
 app.use("/static", express.static(path.resolve("src", "static")));
 
