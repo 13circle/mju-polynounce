@@ -17,6 +17,8 @@ const app = express();
 
 const routes = require("./routes");
 
+const handleRouteError = require("./lib/mw/handle-route-error");
+
 if (NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
@@ -28,6 +30,8 @@ app.engine("html", ejs.renderFile);
 app.use("/static", express.static(path.resolve("src", "static")));
 
 app.use("/", routes);
+
+app.use(handleRouteError);
 
 const port = PORT || 3000;
 
