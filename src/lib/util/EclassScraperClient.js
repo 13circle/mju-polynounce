@@ -19,10 +19,11 @@ class EclassScraperClient extends MJUScraperClient {
    * 
    * @param {string} userId MJU SSO user ID (i.e. Student ID)
    * @param {string} userPwd MJU SSO user password
-   * @param {string} redirectUri Redirection URI used after SSO login
    */
-  constructor(userId, userPwd, redirectUri) {
-    super(userId, userPwd, redirectUri, null);
+  constructor(userId, userPwd) {
+    const { ECLASS_REDIRECT_URI } = process.env;
+
+    super(userId, userPwd, ECLASS_REDIRECT_URI, null);
   }
 
   /**
