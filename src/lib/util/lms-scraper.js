@@ -244,6 +244,43 @@ async function getLmsCourseAnncmnts(lmsClient, user_id, KJKEY) {
   }
 }
 
+async function getLmsAnncmnts(lmsClient) {
+  let axiosRes = null, $;
+
+  try {
+    axiosRes = await lmsClient.get("/ilos/community/notice_list_form.acl");
+
+    $ = loadCheerio(axiosRes.data);
+
+    axiosRes = await lmsClient.post(
+      "/ilos/community/notice_list.acl",
+      qsBody({
+        SCH_KEY: $("#SCH_KEY").val(),
+        SCH_VALUE: $("#SCH_VALUE").val(),
+        start: "",
+        encoding: "utf-8",
+      })
+    );
+
+    $ = loadCheerio(axiosRes.data);
+
+    const anncmnts = [];
+
+    $("td.left > a.site-link").each((i, e) => {
+      anncmnts.push({
+        title: $(e).text(),
+        url: $(e).attr("href"),
+      });
+    });
+
+    return anncmnts;
+  } catch (err) {
+    handleAxiosError(err);
+
+    return null;
+  }
+}
+
 async function getLmsClient(user_id, user_pwd) {
   const lmsClient = await getAccessibleClient(
     user_id,
@@ -260,5 +297,6 @@ module.exports = {
   getCurrentLmsCourses,
   getLmsCourseData,
   getLmsCourseAnncmnts,
+  getLmsAnncmnts,
   getLmsClient,
 };
