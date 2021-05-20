@@ -112,7 +112,7 @@ class LMSScraperClient extends MJUScraperClient {
         })
       );
 
-      const $ = this.loadCheerio(this.getResData());
+      const $ = this.loadCheerioFromResData();
       const courses = [];
 
       $("span.content-title").each((i, e) => {
@@ -158,7 +158,7 @@ class LMSScraperClient extends MJUScraperClient {
 
       await this.httpGet("/ilos/st/course/online_list_form.acl");
 
-      const $ = this.loadCheerio(this.getResData());
+      const $ = this.loadCheerioFromResData();
       const wkArr = [];
 
       const kj_lect_type = $('form[name="myform"]')
@@ -183,7 +183,7 @@ class LMSScraperClient extends MJUScraperClient {
           })
         );
 
-        const $ = this.loadCheerio(this.getResData());
+        const $ = this.loadCheerioFromResData();
 
         $(".lecture-box").each((j, e) => {
           const videos = [];
@@ -279,7 +279,7 @@ class LMSScraperClient extends MJUScraperClient {
 
       await this.httpGet("/ilos/st/course/notice_list_form.acl");
 
-      $ = this.loadCheerio(this.getResData());
+      $ = this.loadCheerioFromResData();
 
       await this.httpPost(
         "/ilos/st/course/notice_list.acl",
@@ -293,7 +293,7 @@ class LMSScraperClient extends MJUScraperClient {
         })
       );
 
-      $ = this.loadCheerio(this.getResData());
+      $ = this.loadCheerioFromResData();
       const anncmnts = [];
 
       $("td.left").each((i, e) => {
@@ -306,7 +306,7 @@ class LMSScraperClient extends MJUScraperClient {
 
       for (let i in anncmnts) {
         await this.httpGet(anncmnts[i].url);
-        $ = this.loadCheerio(this.getResData());
+        $ = this.loadCheerioFromResData();
         anncmnts[i].view = `<table border="1">${$(
           "table.bbsview"
         ).html()}</table>`;
@@ -332,7 +332,7 @@ class LMSScraperClient extends MJUScraperClient {
     try {
       await this.httpGet("/ilos/community/notice_list_form.acl");
 
-      $ = this.loadCheerio(this.getResData());
+      $ = this.loadCheerioFromResData();
 
       await this.httpPost(
         "/ilos/community/notice_list.acl",
@@ -344,7 +344,7 @@ class LMSScraperClient extends MJUScraperClient {
         })
       );
 
-      $ = this.loadCheerio(this.getResData());
+      $ = this.loadCheerioFromResData();
 
       const anncmnts = [];
 

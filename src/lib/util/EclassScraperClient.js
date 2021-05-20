@@ -41,7 +41,7 @@ class EclassScraperClient extends MJUScraperClient {
         },
       });
 
-      const $ = this.loadCheerio(this.getResData());
+      const $ = this.loadCheerioFromResData();
       const courseList = {};
 
       $("table.list > tbody > tr").each((i, e) => {
@@ -68,7 +68,7 @@ class EclassScraperClient extends MJUScraperClient {
       for (let courseName in courseList) {
         await this.httpGet(courseList[courseName].courseUri);
 
-        const $ = this.loadCheerio(this.getResData());
+        const $ = this.loadCheerioFromResData();
 
         courseList[courseName].anncmntUri = $(
           "#MENU > li:nth-child(5) > a"
