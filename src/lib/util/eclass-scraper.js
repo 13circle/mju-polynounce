@@ -69,7 +69,6 @@ async function getEclassClient(user_id, user_pwd) {
     user_id,
     user_pwd,
     "https://home.mju.ac.kr/user/index.action",
-    "https://home.mju.ac.kr",
     null
   );
 

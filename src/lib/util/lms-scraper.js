@@ -285,8 +285,7 @@ async function getLmsClient(user_id, user_pwd) {
   const lmsClient = await getAccessibleClient(
     user_id,
     user_pwd,
-    "http://lms.mju.ac.kr/ilos/bandi/sso/index.jsp",
-    "https://lms.mju.ac.kr",
+    "https://lms.mju.ac.kr/ilos/bandi/sso/index.jsp",
     null
   );
 

@@ -4,6 +4,12 @@ const cheerio = require("cheerio");
 const qs = require("qs");
 const { CookieJar } = require("tough-cookie");
 
+function getBaseUrl(url) {
+  const urlStrs = url.split("/");
+
+  return `${urlStrs[0]}//${urlStrs[2]}`;
+}
+
 function handleAxiosError(err) {
   if (err.config) {
     const { url, method, data, headers } = err.config;
@@ -35,7 +41,6 @@ async function getAccessibleClient(
   user_id,
   user_pwd,
   redirect_uri,
-  targetBaseUri,
   defaultAxiosConfigs
 ) {
   const ssoClient = axios.create({
@@ -88,7 +93,7 @@ async function getAccessibleClient(
       })
     );
 
-    ssoClient.defaults.baseURL = targetBaseUri;
+    ssoClient.defaults.baseURL = getBaseUrl(redirect_uri);
 
     await ssoClient.get(redirect_uri);
 
