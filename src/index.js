@@ -28,6 +28,8 @@ app.set("view engine", "ejs");
 app.engine("html", ejs.renderFile);
 
 app.use(express.json());
+app.use(express.urlencoded());
+app.use(express.text());
 
 app.use("/static", express.static(path.resolve("src", "static")));
 
