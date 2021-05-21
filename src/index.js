@@ -27,6 +27,8 @@ app.set("views", path.resolve(__dirname, "view"));
 app.set("view engine", "ejs");
 app.engine("html", ejs.renderFile);
 
+app.use(express.json());
+
 app.use("/static", express.static(path.resolve("src", "static")));
 
 app.use("/", routes);
