@@ -47,10 +47,10 @@ async function connectDB(callback) {
     if (callback)
       callback(
         db.isUsingSSH()
-          ? db.getMysqlConfig()
-          : {
+          ? {
               path: path.resolve(__dirname, "sessions"),
             }
+          : db.getMysqlConfig()
       );
   } catch (err) {
     throw err;
