@@ -1,14 +1,11 @@
 const mysql = require("mysql2/promise");
-const { Client } = require("ssh2");
+const tunnel = require("tunnel-ssh");
 
 class MyDBConnector {
-  #sshClient;
   #mysqlConfig;
   #tunnelConfig;
-  #portForwardConfig;
 
   #useSSH;
-  #sshStream;
   #mysqlPool;
 
   constructor(connectionLimit, queueLimit) {
@@ -66,26 +63,21 @@ class MyDBConnector {
     };
 
     if (USE_SSH === "true") {
-      this.#sshClient = new Client();
-
       this.#tunnelConfig = {
         host: SSH_HOST,
         port: parseInt(SSH_PORT),
         username: SSH_USERNAME,
         password: SSH_PASSWORD,
-      };
-
-      this.#portForwardConfig = {
-        srcHost: this.#mysqlConfig.host,
+        dstHost: MYSQL_HOST,
+        dstPort: MYSQL_PORT,
+        srcHost: "127.0.0.1",
         srcPort: parseInt(SSH_VALID_FORWARD_SRC_PORT),
-        destHost: "127.0.0.1",
-        destPort: this.#mysqlConfig.port,
+        keepAlive: true,
       };
 
       this.#useSSH = true;
     } else {
       this.#tunnelConfig = null;
-      this.#portForwardConfig = null;
 
       this.#useSSH = false;
     }
@@ -118,41 +110,14 @@ class MyDBConnector {
   #initSSHClient() {
     return new Promise((resolve, reject) => {
       if (this.#useSSH) {
-        this.#sshClient
-          .on("ready", () => {
-            const { srcHost, srcPort, destHost, destPort } =
-              this.#portForwardConfig;
-
-            this.#sshClient.forwardOut(
-              srcHost,
-              srcPort,
-              destHost,
-              destPort,
-              (err, stream) => {
-                if (err) {
-                  reject(err);
-                } else {
-                  this.#mysqlPool = mysql.createPool({
-                    ...this.#mysqlConfig,
-                    stream,
-                  });
-                  this.#sshStream = stream;
-
-                  resolve();
-                }
-              }
-            );
-          })
-          .on("error", (err) => {
-            this.#sshClient.destroy();
-
-            if (reject) {
-              reject(err);
-            } else {
-              throw err;
-            }
-          })
-          .connect(this.#tunnelConfig);
+        tunnel(this.#tunnelConfig, (err, server) => {
+          if (err) {
+            reject(err);
+          } else {
+            this.#mysqlPool = mysql.createPool(this.#mysqlConfig);
+            resolve();
+          }
+        });
       } else {
         reject(Error("This MyDBConnector does not use SSH"));
       }
@@ -164,13 +129,6 @@ class MyDBConnector {
   }
 
   getMysqlConfig() {
-    if (this.#useSSH) {
-      return {
-        ...this.#mysqlConfig,
-        stream: this.#sshStream,
-      };
-    }
-
     return this.#mysqlConfig;
   }
 
@@ -186,9 +144,14 @@ class MyDBConnector {
   }
 
   startConnection(conn) {
-    if (conn.beginTransaction && this.#mysqlPool) {
-      conn.beginTransaction();
-    }
+    return new Promise((resolve, reject) => {
+      if (conn.beginTransaction && this.#mysqlPool) {
+        conn.beginTransaction();
+        resolve();
+      } else {
+        reject(Error("Invalid MySQL connection or pool"));
+      }
+    });
   }
 
   async prepareQuery(conn, sql, inputs) {
@@ -196,6 +159,8 @@ class MyDBConnector {
       if (conn.query && this.#mysqlPool) {
         const [rows, fields] = await conn.query(sql, inputs);
         return { rows, fields };
+      } else {
+        throw Error("Invalid MySQL connection or pool");
       }
     } catch (err) {
       return err;
@@ -203,68 +168,36 @@ class MyDBConnector {
   }
 
   applyQuery(conn) {
-    if (conn.commit && this.#mysqlPool) {
-      conn.commit();
-    }
+    return new Promise((resolve, reject) => {
+      if (conn.commit && this.#mysqlPool) {
+        conn.commit();
+        resolve();
+      } else {
+        reject(Error("Invalid MySQL connection or pool"));
+      }
+    });
   }
 
   cancelQuery(conn) {
-    if (conn.rollback && this.#mysqlPool) {
-      conn.rollback();
-    }
+    return new Promise((resolve, reject) => {
+      if (conn.rollback && this.#mysqlPool) {
+        conn.rollback();
+        resolve();
+      } else {
+        reject(Error("Invalid MySQL connection or pool"));
+      }
+    });
   }
 
   endConnection(conn) {
-    if (conn.release && this.#mysqlPool) {
-      conn.release();
-    }
-  }
-
-  async refreshPool() {
-    try {
-      if (this.#mysqlPool) {
-        if (this.#useSSH) {
-          await this.refreshSSHClient();
-        } else {
-          await this.endPool();
-          this.#mysqlPool = mysql.createPool(this.#mysqlConfig);
-        }
+    return new Promise((resolve, reject) => {
+      if (conn.release && this.#mysqlPool) {
+        conn.release();
+        resolve();
+      } else {
+        reject(Error("Invalid MySQL connection or pool"));
       }
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async endPool() {
-    try {
-      if (this.#mysqlPool) {
-        await this.#mysqlPool.end();
-      }
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async refreshSSHClient() {
-    try {
-      if (this.#useSSH) {
-        await this.endSSHClient();
-        await this.initPool();
-      }
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async endSSHClient() {
-    try {
-      if (this.#useSSH) {
-        await this.#mysqlPool.end();
-        this.#sshClient.destroy();
-      }
-    } catch (err) {
-      throw err;
-    }
+    });
   }
 }
 
