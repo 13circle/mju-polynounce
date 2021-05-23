@@ -21,9 +21,9 @@ class EclassScraperClient extends MJUScraperClient {
    * @param {string} userPwd MJU SSO user password
    */
   constructor(userId, userPwd) {
-    const { ECLASS_REDIRECT_URI } = process.env;
+    const eclassRedirectUri = "https://home.mju.ac.kr/user/index.action";
 
-    super(userId, userPwd, ECLASS_REDIRECT_URI, null);
+    super(userId, userPwd, eclassRedirectUri, null);
   }
 
   /**

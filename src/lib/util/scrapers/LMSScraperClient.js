@@ -21,9 +21,9 @@ class LMSScraperClient extends MJUScraperClient {
    * @param {string} userPwd MJU SSO user password
    */
   constructor(userId, userPwd) {
-    const { LMS_REDIRECT_URI } = process.env;
+    const lmsRedirectUri = "https://lms.mju.ac.kr/ilos/bandi/sso/index.jsp";
 
-    super(userId, userPwd, LMS_REDIRECT_URI, null);
+    super(userId, userPwd, lmsRedirectUri, null);
   }
 
   /**
