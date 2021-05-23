@@ -37,12 +37,9 @@ async function connectDB(callback) {
   try {
     await db.initPool();
 
-    setInterval(async () => {
-      await db.refreshPool();
-      if (NODE_ENV === "development") {
-        console.log("MySQL Pool Refreshed");
-      }
-    }, 1000 * 60 * 15);
+    if (NODE_ENV === "development") {
+      console.log("MySQL Connected");
+    }
 
     if (callback)
       callback(
