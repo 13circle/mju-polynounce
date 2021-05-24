@@ -1,4 +1,3 @@
 node_modules/
-.env
-sessions
+*.env
 test.js
