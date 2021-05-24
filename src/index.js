@@ -49,6 +49,8 @@ async function connectDB() {
         resave: false,
         saveUninitialized: false,
         store: new MySQLStore(dbConfig),
+        cookie:
+          NODE_ENV === "production" ? { secure: true, httpOnly: true } : {},
       })
     );
   } catch (err) {
