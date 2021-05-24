@@ -157,7 +157,9 @@ class MySequelize {
   sync() {
     return new Promise((resolve, reject) => {
       const syncConfig =
-        process.env.NODE_ENV === "development" ? { alter: true } : {};
+        process.env.NODE_ENV === "development"
+          ? { alter: true, force: true }
+          : {};
       this.#sequelize
         .sync(syncConfig)
         .then((sequelize) => {
