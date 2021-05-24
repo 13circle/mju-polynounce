@@ -25,6 +25,11 @@ class User extends Model {
     this.userPwd = await bcrypt.hash(userPwd, saltRounds);
   }
 
+  async compareUserPassword(userPwd) {
+    const isMatch = await bcrypt.compare(userPwd, this.userPwd);
+    return isMatch;
+  }
+
   encryptStudPassword(studPwd) {
     const iv = crypto.randomBytes(16);
     const cipher = crypto.createCipheriv(
