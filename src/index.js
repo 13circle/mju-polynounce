@@ -6,7 +6,6 @@ const path = require("path");
 const ejs = require("ejs");
 
 const session = require("express-session");
-const FileStore = require("session-file-store")(session);
 const MySQLStore = require("express-mysql-session")(session);
 
 dotenv.config();
@@ -21,7 +20,7 @@ const app = express();
 
 const routes = require("./routes");
 
-const MyDBConnector = require("./models/MyDBConnector");
+const initDB = require("./models");
 
 const handleRouteError = require("./lib/mw/handle-route-error");
 
@@ -29,51 +28,35 @@ if (NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-async function connectDB(callback) {
-  global.db = new MyDBConnector();
-
-  const { db } = global;
-
+async function connectDB() {
   try {
-    await db.initPool();
+    const dbConfig = await initDB();
 
     if (NODE_ENV === "development") {
-      console.log("MySQL Connected");
+      console.log("MySQL connected");
     }
 
-    if (callback)
-      callback(
-        db.isUsingSSH()
-          ? {
-              path: path.resolve(__dirname, "sessions"),
-            }
-          : db.getMysqlConfig()
-      );
+    const { SESSION_SECRET } = process.env;
+
+    if (!SESSION_SECRET) {
+      throw Error("SESSION_SECRET must be specified");
+    }
+
+    app.use(
+      session({
+        key: "MJU_POLYNOUNCE_SESSION",
+        secret: SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        store: new MySQLStore(dbConfig),
+      })
+    );
   } catch (err) {
-    throw err;
+    console.error(err);
+    process.exit(-1);
   }
 }
-connectDB((storeConfig) => {
-  const { SESSION_SECRET } = process.env;
-
-  if (!SESSION_SECRET) {
-    throw Error("SESSION_SECRET must be specified");
-  }
-
-  const store = db.isUsingSSH()
-    ? new FileStore(storeConfig)
-    : new MySQLStore(storeConfig);
-
-  app.use(
-    session({
-      key: "MJU_POLYNOUNCE_SESSION",
-      secret: SESSION_SECRET,
-      resave: false,
-      saveUninitialized: false,
-      store,
-    })
-  );
-});
+connectDB();
 
 app.set("views", path.resolve(__dirname, "view"));
 app.set("view engine", "ejs");
