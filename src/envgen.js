@@ -3,8 +3,8 @@ const fs = require("fs");
 
 const envFile = ".env";
 
-function generateSecret() {
-  return randomBytes(128).toString("utf-8").replace(/\s/g, "");
+function generateSecret(len = 128, sliceLen = 0) {
+  return randomBytes(len).toString("base64").slice(sliceLen);
 }
 
 if (fs.existsSync(envFile)) {
@@ -19,6 +19,7 @@ if (fs.existsSync(envFile)) {
   envData += "" + "\n";
   envData += "# Secrets" + "\n";
   envData += "SESSION_SECRET=" + generateSecret() + "\n";
+  envData += "PASSWD_SECRET=" + generateSecret(32, 12) + "\n";
   envData += "" + "\n";
   envData += "# MySQL Configuration" + "\n";
   envData += "MYSQL_HOST=127.0.0.1" + "\n";
@@ -35,7 +36,6 @@ if (fs.existsSync(envFile)) {
   envData += "SSH_USERNAME=" + "\n";
   envData += "SSH_PASSWORD=" + "\n";
   envData += "SSH_VALID_FORWARD_SRC_PORT=3306" + "\n";
-  envData += "" + "\n";
 
   fs.writeFileSync(envFile, envData, "utf-8");
 
