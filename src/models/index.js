@@ -28,6 +28,6 @@ function initDB() {
         reject(err);
       });
   });
-};
+}
 
 module.exports = initDB;
