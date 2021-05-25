@@ -7,7 +7,7 @@ const ejs = require("ejs");
 
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-const MySQLStore = require("express-mysql-session")(session);
+const SessionStore = require("express-session-sequelize")(session.Store);
 const passport = require("passport");
 
 dotenv.config();
@@ -35,7 +35,7 @@ app.use(cookieParser());
 
 async function connectDB() {
   try {
-    const dbConfig = await initDB();
+    const sequelize = await initDB();
 
     if (NODE_ENV === "development") {
       console.log("MySQL connected");
@@ -53,7 +53,7 @@ async function connectDB() {
         secret: SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
-        store: new MySQLStore(dbConfig),
+        store: new SessionStore({ db: sequelize }),
         cookie:
           NODE_ENV === "production" ? { secure: true, httpOnly: true } : {},
       })

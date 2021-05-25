@@ -2,6 +2,7 @@ const MySequelize = require("./config/MySequelize");
 
 const models = [
   require("./User"),
+  require("./UserToken"),
   require("./ScraperCache"),
   require("./CacheNotification"),
   require("./CacheAssignment"),
@@ -18,7 +19,7 @@ function initDB() {
         });
         db.sync()
           .then(() => {
-            resolve(db.getMySqlConfig());
+            resolve(sequelize);
           })
           .catch((err) => {
             reject(err);
