@@ -5,8 +5,10 @@ const morgan = require("morgan");
 const path = require("path");
 const ejs = require("ejs");
 
+const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const MySQLStore = require("express-mysql-session")(session);
+const passport = require("passport");
 
 dotenv.config();
 
@@ -21,12 +23,15 @@ const app = express();
 const routes = require("./routes");
 
 const initDB = require("./models");
+const passportConfig = require("./lib/util/passport");
 
 const handleRouteError = require("./lib/mw/handle-route-error");
 
 if (NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+
+app.use(cookieParser());
 
 async function connectDB() {
   try {
@@ -58,26 +63,38 @@ async function connectDB() {
     process.exit(-1);
   }
 }
-connectDB();
 
-app.set("views", path.resolve(__dirname, "view"));
-app.set("view engine", "ejs");
-app.engine("html", ejs.renderFile);
+(async () => {
+  await connectDB();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(express.text());
+  app.use(passport.initialize());
+  app.use(passport.session());
 
-app.use("/static", express.static(path.resolve("src", "static")));
+  await passportConfig();
 
-app.use("/", routes);
-
-app.use(handleRouteError);
-
-const port = PORT || 3000;
-
-http.createServer(app).listen(port, () => {
   if (NODE_ENV === "development") {
-    console.log(`Server listening to port ${port}`);
+    console.log("Passport initialized");
   }
-});
+
+  app.set("views", path.resolve(__dirname, "view"));
+  app.set("view engine", "ejs");
+  app.engine("html", ejs.renderFile);
+
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
+  app.use(express.text());
+
+  app.use("/static", express.static(path.resolve("src", "static")));
+
+  app.use("/", routes);
+
+  app.use(handleRouteError);
+
+  const port = PORT || 3000;
+
+  http.createServer(app).listen(port, () => {
+    if (NODE_ENV === "development") {
+      console.log(`Server listening to port ${port}`);
+    }
+  });
+})();
