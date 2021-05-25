@@ -20,6 +20,7 @@ if (fs.existsSync(envFile)) {
   envData += "# Secrets" + "\n";
   envData += "SESSION_SECRET=" + generateSecret() + "\n";
   envData += "PASSWD_SECRET=" + generateSecret(32, 12) + "\n";
+  envData += "JWT_SECRET=" + generateSecret() + "\n";
   envData += "" + "\n";
   envData += "# MySQL Configuration" + "\n";
   envData += "MYSQL_HOST=127.0.0.1" + "\n";
