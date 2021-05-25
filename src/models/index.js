@@ -2,7 +2,6 @@ const MySequelize = require("./config/MySequelize");
 
 const models = [
   require("./User"),
-  require("./UserToken"),
   require("./ScraperCache"),
   require("./CacheNotification"),
   require("./CacheAssignment"),
