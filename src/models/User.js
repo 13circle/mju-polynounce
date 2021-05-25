@@ -100,11 +100,6 @@ function initModel(sequelize) {
         allowNull: false,
         defaultValue: false,
       },
-      emailCheckCode: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: () => Math.random().toString(36).slice(2),
-      },
     },
     {
       modelName: "User",
