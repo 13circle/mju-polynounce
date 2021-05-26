@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/static/js/jquery-3.6.0.min.js"></script>
+  <title>Email Verified | MJU Polynounce</title>
+</head>
+<body>
+  <h1 id="msg"></h1>
+  <button id="btnToLogin">로그인하기</button>
+  <button id="btnToHome">홈으로</button>
+  <% if (token) { %>
+    <script>
+      var token = "<%- token %>";
+
+      $("#btnToLogin").click(function () {
+        window.location.href = "/auth/login";
+      });
+      $("#btnToHome").click(function () {
+        window.location.href = "/";
+      });
+
+      $("#btnToLogin").hide();
+      $("#btnToHome").hide();
+
+      $.ajax({
+        url: "/auth/confirm-email/" + token,
+        type: "POST",
+        success: function (data) {
+          $("#msg").text("이메일 인증을 완료했습니다");
+          $("#btnToLogin").show();
+        },
+        error: function (xhr) {
+          var err = xhr.responseJSON.error;
+          if (err === "REDUNDANT_OVERWRITE") {
+            $("#msg").text("이 메일은 이미 인증되었습니다");
+            $("#btnToLogin").show();
+            $("#btnToHome").hide();
+          } else {
+            $("#msg").text("인증에 실패했습니다");
+            $("#btnToHome").show();
+            $("#btnToLogin").hide();
+          }
+        },
+      });
+    </script>
+  <% } else { %>
+    <script>
+      $("#btnToLogin").hide();
+      $("#btnToHome").hide();
+
+      $("#msg").text("잘못된 접근입니다");
+    </script>
+  <% } %>
+</body>
+</html>
