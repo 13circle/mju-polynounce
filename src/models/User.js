@@ -114,14 +114,16 @@ class User extends Model {
     return studPwd;
   }
 
-  async checkStudAccount(studId, studPwd) {
-    try {
-      const isStudValid = await MJUScraperClient.checkUser(studId, studPwd);
-
-      return isStudValid;
-    } catch (err) {
-      return false;
-    }
+  static checkStudAccount(studId, studPwd) {
+    return new Promise((resolve, reject) => {
+      MJUScraperClient.checkUser(studId, studPwd)
+        .then((isStudValid) => {
+          resolve(isStudValid);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
   }
 
   generateEmailToken(isMjuEmail) {

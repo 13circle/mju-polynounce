@@ -68,7 +68,7 @@ authCtrl.register = async (req, res) => {
       mjuEmail,
     });
 
-    const isStudValid = await user.checkStudAccount(studId, studPwd);
+    const isStudValid = await User.checkStudAccount(studId, studPwd);
     if (!isStudValid) {
       return res.status(401).send({
         error: "INVALID_STUD_ACCOUNT",
