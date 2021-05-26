@@ -16,6 +16,14 @@ if (fs.existsSync(envFile)) {
   envData += "NODE_ENV=development" + "\n";
   envData += "#NODE_ENV=production" + "\n";
   envData += "#PORT=" + "\n";
+  envData += "BASE_URL=http://localhost:3000" + "\n";
+  envData += "" + "\n";
+  envData += "# Nodemailer Configuration" + "\n";
+  envData += "MAILER_SERVICE=" + "\n";
+  envData += "MAILER_HOST=" + "\n";
+  envData += "MAILER_PORT=" + "\n";
+  envData += "MAILER_USER=" + "\n";
+  envData += "MAILER_PASSWORD=" + "\n";
   envData += "" + "\n";
   envData += "# Secrets" + "\n";
   envData += "SESSION_SECRET=" + generateSecret() + "\n";
