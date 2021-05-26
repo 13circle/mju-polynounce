@@ -20,6 +20,7 @@ if (fs.existsSync(envFile)) {
   envData += "" + "\n";
   envData += "# Nodemailer Configuration" + "\n";
   envData += "MAILER_SERVICE=" + "\n";
+  envData += "MAILER_EMAIL=" + "\n";
   envData += "MAILER_HOST=" + "\n";
   envData += "MAILER_PORT=" + "\n";
   envData += "MAILER_USER=" + "\n";
