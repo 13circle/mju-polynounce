@@ -88,7 +88,7 @@ class MyDBConnector {
   initPool() {
     return new Promise((resolve, reject) => {
       if (this.#useSSH) {
-        this.#initSSHClient()
+        this.initSSHClient()
           .then(() => {
             resolve();
           })
@@ -107,7 +107,7 @@ class MyDBConnector {
     });
   }
 
-  #initSSHClient() {
+  initSSHClient() {
     return new Promise((resolve, reject) => {
       if (this.#useSSH) {
         tunnel(this.#tunnelConfig, (err, server) => {

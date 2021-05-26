@@ -112,7 +112,7 @@ class MySequelize {
           if (err) {
             reject(err);
           } else {
-            this.#authenticate()
+            this.authenticate()
               .then(() => {
                 resolve(this.#sequelize);
               })
@@ -122,7 +122,7 @@ class MySequelize {
           }
         });
       } else {
-        this.#authenticate()
+        this.authenticate()
           .then(() => {
             resolve(this.#sequelize);
           })
@@ -133,7 +133,7 @@ class MySequelize {
     });
   }
 
-  #authenticate() {
+  authenticate() {
     return new Promise((resolve, reject) => {
       this.#sequelize
         .authenticate()
