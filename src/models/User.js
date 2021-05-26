@@ -114,18 +114,11 @@ class User extends Model {
     return studPwd;
   }
 
-  async checkStudAccount() {
+  async checkStudAccount(studId, studPwd) {
     try {
-      const mjuClient = new MJUScraperClient(
-        this.studId,
-        this.studPwd,
-        "https://www.mju.ac.kr/mjukr/index.do",
-        null
-      );
+      const isStudValid = await MJUScraperClient.checkUser(studId, studPwd);
 
-      await mjuClient.initSSOclient();
-
-      return mjuClient.isUserValid;
+      return isStudValid;
     } catch (err) {
       return false;
     }
