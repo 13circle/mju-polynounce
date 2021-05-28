@@ -16,7 +16,7 @@ class LMSScraperClient extends MJUScraperClient {
   /**
    * @constructs LMSScraperClient
    * @description Initialize new REST client manager for MJU LMS
-   * 
+   *
    * @param {string} userId MJU SSO user ID (i.e. Student ID)
    * @param {string} userPwd MJU SSO user password
    */
@@ -29,7 +29,7 @@ class LMSScraperClient extends MJUScraperClient {
   /**
    * @method parseLmsAttendenceDates
    * @description
-   * 
+   *
    * - Parse `datesIntvStr` into valid attendence `startDate` and `dueDate`
    * - e.g.
    *   ```
@@ -39,7 +39,7 @@ class LMSScraperClient extends MJUScraperClient {
    *     dueDate,   // msec value at 11:59 PM in May 31st, 2021
    *   } = this.parseLmsAttendenceDates(datesIntvStr);
    *   ```
-   * 
+   *
    * @param {string} datesIntvStr Attendence dates string
    * @returns {Object} `startDate` and `dueDate` of the lecture
    */
@@ -84,7 +84,7 @@ class LMSScraperClient extends MJUScraperClient {
   /**
    * @method getCurrentLmsCourses
    * @description Get the list of information of LMS courses
-   * 
+   *
    * @returns {Object[]} List of `name` and `kjkey` of LMS courses
    */
   async getCurrentLmsCourses() {
@@ -133,7 +133,7 @@ class LMSScraperClient extends MJUScraperClient {
   /**
    * @method getLmsCourseData
    * @description Get weekly data of the LMS course by the given `kjkey`
-   * 
+   *
    * @param {string} kjkey Unique kjkey of the LMS course
    * @returns {Object[]} List of weekly lecture data w/ progresses
    */
@@ -252,7 +252,7 @@ class LMSScraperClient extends MJUScraperClient {
   /**
    * @method getLmsCourseAnncmnts
    * @description Get the list of anncmnts of the LMS course by the given `kjkey`
-   * 
+   *
    * @param {string} kjkey Unique kjkey of the LMS course
    * @returns {Object[]} List of `url` and `view` of the course anncmnts
    */
@@ -321,9 +321,77 @@ class LMSScraperClient extends MJUScraperClient {
   }
 
   /**
+   * @method getLmsCourseAssignments
+   * @description Get the list of assignments for the course by the given key
+   * 
+   * @param {string} kjkey Unique kjkey of the LMS course
+   * @returns {Object[]} List of assignment information
+   */
+  async getLmsCourseAssignments(kjkey) {
+    let $ = null;
+
+    try {
+      await this.httpPost(
+        "/ilos/st/course/eclass_room2.acl",
+        this.qsBody({
+          KJKEY: kjkey,
+          FLAG: "mp",
+          returnURI: "/ilos/st/course/submain_form.acl",
+          encoding: "utf-8",
+        })
+      );
+
+      const { isError, message } = this.getResData();
+
+      if (isError) {
+        console.log(message);
+        return null;
+      }
+
+      await this.httpPost(
+        "/ilos/st/course/report_list.acl",
+        this.qsBody({
+          start: "",
+          display: 1,
+          SCH_VALUE: "",
+          ud: this.userId,
+          ky: kjkey,
+          encoding: "utf-8",
+        })
+      );
+
+      $ = this.loadCheerioFromResData();
+
+      const assignments = [];
+
+      $("tbody > tr").each((i, tr) => {
+        const tds = $(tr).children();
+        const score = $(tds[5]).text().trim();
+        const points = $(tds[6]).text().trim();
+        assignments.push({
+          postId: $(tds[0]).text(),
+          title: $(tds[2]).find("div.subjt_top").text(),
+          boardUrl: $(tds[2]).attr("onclick").split("'")[1],
+          isRead: $(tds[2]).attr("class").trim() === "",
+          isInProgress: $(tds[3]).text() === "진행중",
+          isSubmitted: $(tds[4]).find("img").attr("alt") === "제출",
+          scorePerPoints:
+            score === "비공개" ? "공개 안 됨" : `${score}/${points}`,
+        });
+      });
+
+      return assignments;
+    } catch (err) {
+      console.log(this.handleAxiosError(err));
+
+      return null;
+    }
+  }
+
+  /**
    * @method getLmsAnncmnts
    * @description Get the list of common LMS anncmnts for all students
-   * 
+   *
    * @returns {Object[]} List of `url` and `view` of the anncmnts
    */
   async getLmsAnncmnts() {
