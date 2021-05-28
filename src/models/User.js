@@ -27,10 +27,6 @@ if (!JWT_SECRET) {
   throw Error("JWT_SECRET must be specified");
 }
 
-if (!BASE_URL) {
-  throw Error("BASE_URL must be specified");
-}
-
 if (
   !MAILER_SERVICE ||
   !MAILER_EMAIL ||

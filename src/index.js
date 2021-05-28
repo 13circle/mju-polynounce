@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const http = require("http");
 const morgan = require("morgan");
 const path = require("path");
+const os = require("os");
 const ejs = require("ejs");
 
 const cookieParser = require("cookie-parser");
@@ -12,10 +13,32 @@ const passport = require("passport");
 
 dotenv.config();
 
-const { PORT, NODE_ENV } = process.env;
+const { NODE_ENV, PORT, BASE_URL } = process.env;
 
 if (!NODE_ENV) {
   throw Error("NODE_ENV must be specified");
+}
+
+const port = PORT || 3000;
+
+if (!BASE_URL) {
+  throw Error("BASE_URL must be specified");
+} else if (BASE_URL === "localhost") {
+  const nets = os.networkInterfaces();
+  const results = {};
+
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      if (net.family === "IPv4" && !net.internal) {
+        if (!results[name]) {
+          results[name] = [];
+        }
+        results[name].push(net.address);
+      }
+    }
+  }
+
+  process.env.BASE_URL = `http://${results["Wi-Fi"][0]}:${port}`;
 }
 
 const app = express();
@@ -89,8 +112,6 @@ async function connectDB() {
   app.use("/", routes);
 
   app.use(handleRouteError);
-
-  const port = PORT || 3000;
 
   http.createServer(app).listen(port, () => {
     if (NODE_ENV === "development") {
