@@ -3,8 +3,8 @@ const dotenv = require("dotenv");
 const http = require("http");
 const morgan = require("morgan");
 const path = require("path");
-const os = require("os");
 const ejs = require("ejs");
+const internalIp = require("internal-ip");
 
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
@@ -24,21 +24,7 @@ const port = PORT || 3000;
 if (!BASE_URL) {
   throw Error("BASE_URL must be specified");
 } else if (BASE_URL === "localhost") {
-  const nets = os.networkInterfaces();
-  const results = {};
-
-  for (const name of Object.keys(nets)) {
-    for (const net of nets[name]) {
-      if (net.family === "IPv4" && !net.internal) {
-        if (!results[name]) {
-          results[name] = [];
-        }
-        results[name].push(net.address);
-      }
-    }
-  }
-
-  process.env.BASE_URL = `http://${results["Wi-Fi"][0]}:${port}`;
+  process.env.BASE_URL = `http://${internalIp.v4.sync()}:${port}`;
 }
 
 const app = express();
