@@ -16,7 +16,8 @@ if (fs.existsSync(envFile)) {
   envData += "NODE_ENV=development" + "\n";
   envData += "#NODE_ENV=production" + "\n";
   envData += "#PORT=" + "\n";
-  envData += "BASE_URL=http://localhost:3000" + "\n";
+  envData += "#BASE_URL=" + "\n";
+  envData += "BASE_URL=localhost" + "\n";
   envData += "" + "\n";
   envData += "# Nodemailer Configuration" + "\n";
   envData += "MAILER_SERVICE=" + "\n";
