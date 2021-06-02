@@ -16,7 +16,7 @@ class EclassScraperClient extends MJUScraperClient {
   /**
    * @constructs EclassScraperClient
    * @description Initialize new REST client manager for MJU Eclass
-   * 
+   *
    * @param {string} userId MJU SSO user ID (i.e. Student ID)
    * @param {string} userPwd MJU SSO user password
    */
@@ -29,7 +29,7 @@ class EclassScraperClient extends MJUScraperClient {
   /**
    * @method getEclassCourseData
    * @description Get the list of board URIs of each Eclass courses
-   * 
+   *
    * @returns {Object[]} List of board URIs of each Eclass courses
    */
   async getEclassCourseData() {
@@ -86,6 +86,90 @@ class EclassScraperClient extends MJUScraperClient {
       console.log(this.handleAxiosError(err));
 
       return null;
+    }
+  }
+
+  async getAnncmntsByUri(anncmntUri) {
+    const anncmnts = [];
+
+    try {
+      await this.httpGet(anncmntUri);
+
+      const $ = this.loadCheerioFromResData();
+
+      $("form[name=frm] > table > tbody > tr").each((i, tr) => {
+        const dateVals = $(tr)
+          .find("td:nth-child(4)")
+          .text()
+          .trim()
+          .split("-")
+          .map((d) => parseInt(d));
+        const uploadedAt = new Date(
+          dateVals[0],
+          dateVals[1] - 1,
+          dateVals[2]
+        ).getTime();
+
+        anncmnts.push({
+          postId: parseInt($(tr).find("td:first-child").text().trim()),
+          title: $(tr).find("td:nth-child(2) > a").text().trim(),
+          boardUri: $(tr).find("td:nth-child(2) > a").attr("href"),
+          uploadedAt,
+          isFileAttached: $(tr).find("td:last-child").text().trim() !== "-",
+        });
+      });
+
+      return anncmnts;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async getHomeworksByUri(homeworkUri) {
+    const homeworks = [];
+
+    try {
+      await this.httpGet(homeworkUri);
+
+      const $ = this.loadCheerioFromResData();
+
+      $("form[name=frm] > table > tbody > tr").each((i, tr) => {
+        const dateTimeStrs = $(tr)
+          .find("td:nth-child(4)")
+          .text()
+          .trim()
+          .replace("시", "")
+          .split(" ");
+        const dateVals = dateTimeStrs[0].split("-").map((d) => parseInt(d));
+        const dueDateTime = new Date(
+          dateVals[0],
+          dateVals[1] - 1,
+          dateVals[2],
+          parseInt(dateTimeStrs[1])
+        ).getTime();
+
+        homeworks.push({
+          postId: parseInt($(tr).find("td:first-child").text().trim()),
+          title: $(tr).find("td:nth-child(2) > a").text().trim(),
+          boardUri: $(tr).find("td:nth-child(2) > a").attr("href"),
+          dueDateTime,
+          status: $(tr).find("td:nth-child(6)").text().trim(),
+        });
+      });
+
+      return homeworks;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async getBoardPostsByUri(boardUri) {
+    try {
+      const boardPosts = await this.getAnncmntsByUri(boardUri);
+
+      return boardPosts;
+    } catch (err) {
+      throw err;
     }
   }
 }
