@@ -93,8 +93,10 @@ async function connectDB() {
   app.use(express.urlencoded({ extended: false }));
   app.use(express.text());
 
-  app.use("/static", express.static(path.resolve("src", "static")));
-
+  if (NODE_ENV === "development" || BASE_URL === "localhost") {
+    app.use("/static", express.static(path.resolve("src", "static")));
+  }
+  
   app.use("/", routes);
 
   app.use(handleRouteError);
