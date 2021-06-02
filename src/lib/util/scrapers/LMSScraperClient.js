@@ -197,7 +197,7 @@ class LMSScraperClient extends MJUScraperClient {
                 viewInfo = viewInfo
                   .replace("viewGo('", "")
                   .replace("');", "")
-                  .replaceAll(" ", "")
+                  .replace(/ /g, "")
                   .split("','");
               } else {
                 viewInfo = [];
