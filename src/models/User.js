@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
-const MJUScraperClient = require("../lib/util/scrapers/MJUScraperClient");
+const MJUScraperClient = require("@scrapers/MJUScraperClient");
 
 const {
   PASSWD_SECRET,

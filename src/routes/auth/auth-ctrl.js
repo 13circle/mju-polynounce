@@ -2,7 +2,7 @@ const authCtrl = {};
 
 const Joi = require("joi");
 
-const { User } = require("../../models/User");
+const { User } = require("@models/User");
 
 authCtrl.loginPage = (req, res) => {
   res.status(200).render("auth/login.html");

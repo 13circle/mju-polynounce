@@ -14,6 +14,16 @@
   },
   "keywords": [],
   "author": "",
+  "_moduleAliases": {
+    "@root": ".",
+    "@view": "src/view",
+    "@routes": "src/routes",
+    "@models": "src/models",
+    "@util": "src/lib/util",
+    "@mw": "src/lib/mw",
+    "@config": "src/lib/config",
+    "@scrapers": "src/lib/util/scrapers"
+  },
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",

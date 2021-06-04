@@ -27,14 +27,16 @@ if (!BASE_URL) {
   process.env.BASE_URL = `http://${internalIp.v4.sync()}:${port}`;
 }
 
+require("module-alias/register");
+
 const app = express();
 
-const routes = require("./routes");
+const routes = require("@routes");
 
-const initDB = require("./models");
-const passportConfig = require("./lib/util/passport");
+const initDB = require("@models");
+const passportConfig = require("@util/passport");
 
-const handleRouteError = require("./lib/mw/handle-route-error");
+const handleRouteError = require("@mw/handle-route-error");
 
 if (NODE_ENV === "development") {
   app.use(morgan("dev"));
@@ -96,7 +98,7 @@ async function connectDB() {
   if (NODE_ENV === "development" || BASE_URL === "localhost") {
     app.use("/static", express.static(path.resolve("src", "static")));
   }
-  
+
   app.use("/", routes);
 
   app.use(handleRouteError);
