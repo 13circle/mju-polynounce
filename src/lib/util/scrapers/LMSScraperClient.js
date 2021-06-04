@@ -26,6 +26,28 @@ class LMSScraperClient extends MJUScraperClient {
     super(userId, userPwd, lmsRedirectUri, null);
   }
 
+  parseLmsDateTime(dateTimeStr) {
+    const dtStrs = dateTimeStr.trim().split(" ");
+
+    dtStrs[0] = dtStrs[0].split(".").map((v) => parseInt(v));
+    dtStrs[0][1] -= 1;
+    dtStrs[2] = dtStrs[2].split(":").map((v) => parseInt(v));
+
+    if (dtStrs[1] === "오후") {
+      dtStrs[2][0] += 12;
+    } else if (dtStrs[2][0] === 12) {
+      dtStrs[2][0] = 0;
+    }
+
+    return new Date(
+      dtStrs[0][0],
+      dtStrs[0][1],
+      dtStrs[0][2],
+      dtStrs[2][0],
+      dtStrs[2][1]
+    ).getTime();
+  }
+
   /**
    * @method parseLmsAttendenceDates
    * @description
@@ -47,37 +69,11 @@ class LMSScraperClient extends MJUScraperClient {
     const attdDateTimes = datesIntvStr
       .trim()
       .split("~")
-      .map((dStr) => {
-        const dtStrs = dStr.trim().split(" ");
-
-        dtStrs[0] = dtStrs[0].split(".").map((v) => parseInt(v));
-        dtStrs[0][1] -= 1;
-        dtStrs[2] = dtStrs[2].split(":").map((v) => parseInt(v));
-
-        if (dtStrs[1] === "오후") {
-          dtStrs[2][0] += 12;
-        } else if (dtStrs[2][0] === 12) {
-          dtStrs[2][0] = 0;
-        }
-
-        return dtStrs;
-      });
+      .map((dStr) => this.parseLmsDateTime(dStr));
 
     return {
-      startDate: new Date(
-        attdDateTimes[0][0][0],
-        attdDateTimes[0][0][1],
-        attdDateTimes[0][0][2],
-        attdDateTimes[0][2][0],
-        attdDateTimes[0][2][1]
-      ).getTime(),
-      dueDate: new Date(
-        attdDateTimes[1][0][0],
-        attdDateTimes[1][0][1],
-        attdDateTimes[1][0][2],
-        attdDateTimes[1][2][0],
-        attdDateTimes[1][2][1]
-      ).getTime(),
+      startDate: attdDateTimes[0],
+      dueDate: attdDateTimes[1],
     };
   }
 
@@ -296,21 +292,16 @@ class LMSScraperClient extends MJUScraperClient {
       $ = this.loadCheerioFromResData();
       const anncmnts = [];
 
-      $("td.left").each((i, e) => {
+      $("table.bbslist > tbody > tr").each((i, tr) => {
         anncmnts.push({
-          subject: $(e).find("a.site-link > div:first-child").text(),
-          url: $(e).attr("onclick").split("'")[1],
-          view: "",
+          postId: parseInt($(tr).find("td:first-child").text().trim()),
+          title: $(tr).find("td.left > a > div:first-child").text().trim(),
+          url: $(tr).find("td.left").attr("onclick").split("'")[1],
+          uploadedAt: this.parseLmsDateTime(
+            $(tr).find("td:last-child").text().trim()
+          ),
         });
       });
-
-      for (let i in anncmnts) {
-        await this.httpGet(anncmnts[i].url);
-        $ = this.loadCheerioFromResData();
-        anncmnts[i].view = `<table border="1">${$(
-          "table.bbsview"
-        ).html()}</table>`;
-      }
 
       return anncmnts;
     } catch (err) {
@@ -323,7 +314,7 @@ class LMSScraperClient extends MJUScraperClient {
   /**
    * @method getLmsCourseAssignments
    * @description Get the list of assignments for the course by the given key
-   * 
+   *
    * @param {string} kjkey Unique kjkey of the LMS course
    * @returns {Object[]} List of assignment information
    */
