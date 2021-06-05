@@ -76,10 +76,12 @@ describe("Scraper Test", function () {
     try {
       await lmsClient.initSSOclient();
       const courses = await lmsClient.getCurrentLmsCourses();
-      const { kjkey } = courses[0];
-      await lmsClient.getLmsCourseData(kjkey);
-      await lmsClient.getLmsCourseAnncmnts(kjkey);
-      await lmsClient.getLmsCourseAssignments(kjkey);
+      for (let i in courses) {
+        const { kjkey } = courses[i];
+        await lmsClient.getLmsCourseData(kjkey);
+        await lmsClient.getLmsCourseAnncmnts(kjkey);
+        await lmsClient.getLmsCourseAssignments(kjkey);
+      }
       await lmsClient.getLmsAnncmnts();
     } catch (err) {
       throw err;
