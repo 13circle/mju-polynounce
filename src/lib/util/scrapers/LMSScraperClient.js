@@ -388,7 +388,6 @@ class LMSScraperClient extends MJUScraperClient {
           postId: parseInt($(tds[0]).text()),
           title: $(tds[2]).find("div.subjt_top").text(),
           boardUri: $(tds[2]).attr("onclick").split("'")[1],
-          isNew: $(tds[2]).hasClass("unread_article"),
           isInProgress: $(tds[3]).text() === "진행중",
           isSubmitted: $(tds[4]).find("img").attr("alt") === "제출",
           scorePerPoints:
@@ -443,7 +442,6 @@ class LMSScraperClient extends MJUScraperClient {
           uploadedAt: this.parseLmsDateTime(
             $(tr).find("td:nth-child(4)").text().trim()
           ),
-          isNew: $(tr).find("td.left").hasClass("unread_article"),
           isFileAttached: $(tr).find("td:nth-child(3) > a").length > 0,
         });
       });

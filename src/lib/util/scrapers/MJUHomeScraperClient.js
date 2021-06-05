@@ -35,7 +35,6 @@ class MJUHomeScraperClient extends MJUScraperClient {
           title: $(tr).find("td._artclTdTitle > a > strong").text(),
           boardUri,
           uploadedAt: new Date(yr, mth - 1, dt).getTime(),
-          isNew: $(tr).find("td._artclTdTitle > a > span").text() !== "",
           isFileAttached:
             $(tr).find("td._artclTdAtchFile > span").text() !== "",
         };
