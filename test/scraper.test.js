@@ -2,10 +2,10 @@
 
 require("./init.test");
 
-const { TEST_USER_ID, TEST_USER_PASSWORD, TEST_DEPT } = process.env;
+const { TEST_USER_ID, TEST_USER_PASSWORD } = process.env;
 
-if (!TEST_USER_ID || !TEST_USER_PASSWORD || !TEST_DEPT) {
-  throw Error("TEST_USER_ID, TEST_USER_PASSWORD & TEST_DEPT must be specified");
+if (!TEST_USER_ID || !TEST_USER_PASSWORD) {
+  throw Error("TEST_USER_ID, TEST_USER_PASSWORD must be specified");
 }
 
 const MJUHomeScraperClient = require("@scrapers/MJUHomeScraperClient");
@@ -56,14 +56,16 @@ describe("Scraper Test", function () {
   });
 
   it("JW4DeptScraperClient", async () => {
-    const deptClient = new JW4DeptScraperClient(
-      TEST_USER_ID,
-      TEST_USER_PASSWORD,
-      jw4DeptCode[TEST_DEPT]
-    );
     try {
-      await deptClient.initSSOclient();
-      await deptClient.getDeptAnncmnts();
+      for (let dept in jw4DeptCode) {
+        const deptClient = new JW4DeptScraperClient(
+          TEST_USER_ID,
+          TEST_USER_PASSWORD,
+          jw4DeptCode[dept]
+        );
+        await deptClient.initSSOclient();
+        await deptClient.getDeptAnncmnts();
+      }
     } catch (err) {
       throw err;
     }
