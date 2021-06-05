@@ -7,12 +7,12 @@ const MJUScraperClient = require("./MJUScraperClient");
 class JW4DeptScraperClient extends MJUScraperClient {
   #boardUri;
 
-  constructor(userId, userPwd, jw4DeptCodeObj) {
-    const deptRedirectUri = `http://jw4.mju.ac.kr/user/${jw4DeptCodeObj.deptUserCode}/index.action`;
+  constructor(userId, userPwd, jw4DeptCode, boardUri) {
+    const deptRedirectUri = `http://jw4.mju.ac.kr/user/${jw4DeptCode}/index.action`;
 
     super(userId, userPwd, deptRedirectUri, null);
 
-    this.#boardUri = jw4DeptCodeObj.boardUri;
+    this.#boardUri = boardUri;
   }
 
   async getDeptAnncmnts() {

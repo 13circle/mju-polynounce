@@ -57,11 +57,12 @@ describe("Scraper Test", function () {
 
   it("JW4DeptScraperClient", async () => {
     try {
-      for (let dept in jw4DeptCode) {
+      for (let code in jw4DeptCode) {
         const deptClient = new JW4DeptScraperClient(
           TEST_USER_ID,
           TEST_USER_PASSWORD,
-          jw4DeptCode[dept]
+          code,
+          jw4DeptCode[code].boardUri
         );
         await deptClient.initSSOclient();
         await deptClient.getDeptAnncmnts();
