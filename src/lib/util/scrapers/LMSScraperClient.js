@@ -292,6 +292,10 @@ class LMSScraperClient extends MJUScraperClient {
       $ = this.loadCheerioFromResData();
       const anncmnts = [];
 
+      if($("table.bbslist > tbody > tr > td").length === 1) {
+        return anncmnts;
+      }
+
       $("table.bbslist > tbody > tr").each((i, tr) => {
         anncmnts.push({
           postId: parseInt($(tr).find("td:first-child").text().trim()),
@@ -354,6 +358,10 @@ class LMSScraperClient extends MJUScraperClient {
       $ = this.loadCheerioFromResData();
 
       const assignments = [];
+
+      if($("table.bbslist > tbody > tr > td").length === 1) {
+        return assignments;
+      }
 
       $("tbody > tr").each((i, tr) => {
         const tds = $(tr).children();
