@@ -148,12 +148,15 @@ class EclassScraperClient extends MJUScraperClient {
           parseInt(dateTimeStrs[1])
         ).getTime();
 
+        const score = parseInt($(tr).find("td:last-child").text().trim());
+
         homeworks.push({
           postId: parseInt($(tr).find("td:first-child").text().trim()),
           title: $(tr).find("td:nth-child(2) > a").text().trim(),
           boardUri: $(tr).find("td:nth-child(2) > a").attr("href"),
           dueDateTime,
           status: $(tr).find("td:nth-child(6)").text().trim(),
+          score: isNaN(score) ? 0 : score,
         });
       });
 

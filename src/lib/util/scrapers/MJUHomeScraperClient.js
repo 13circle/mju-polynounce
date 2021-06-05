@@ -22,8 +22,8 @@ class MJUHomeScraperClient extends MJUScraperClient {
       const anncmnts = [];
 
       $("table.artclTable > tbody > tr").each((i, tr) => {
-        const boardUrl = $(tr).find("td._artclTdTitle > a").attr("href");
-        const postId = boardUrl.split("/")[4];
+        const boardUri = $(tr).find("td._artclTdTitle > a").attr("href");
+        const postId = boardUri.split("/")[4];
         const [yr, mth, dt] = $(tr)
           .find("td._artclTdRdate")
           .text()
@@ -33,7 +33,7 @@ class MJUHomeScraperClient extends MJUScraperClient {
         const anncmnt = {
           postId,
           title: $(tr).find("td._artclTdTitle > a > strong").text(),
-          boardUrl,
+          boardUri,
           uploadedAt: new Date(yr, mth - 1, dt).getTime(),
           isNew: $(tr).find("td._artclTdTitle > a > span").text() !== "",
           isFileAttached:

@@ -40,10 +40,8 @@ class JW4DeptScraperClient extends MJUScraperClient {
           title: $(tr).find("td:nth-child(2) > a").text().trim(),
           boardUri: `/user/${$(tr).find("td:nth-child(2) > a").attr("href")}`,
           uploadedAt,
-          isNew:
-            typeof $(tr).find("td:nth-child(2) > a > img").attr("alt") !==
-            "undefined",
-          isFileAttached: $(tr).find("td:last-child").text().trim() !== "-",
+          isNew: $(tr).find("td:nth-child(2) > a > img").length > 0,
+          isFileAttached: $(tr).find("td:last-child > a").length > 0,
         });
       });
 

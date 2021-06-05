@@ -30,6 +30,9 @@ class LMSScraperClient extends MJUScraperClient {
     const dtStrs = dateTimeStr.trim().split(" ");
 
     dtStrs[0] = dtStrs[0].split(".").map((v) => parseInt(v));
+    if (dtStrs[0].length === 2) {
+      dtStrs[0].unshift(new Date().getFullYear());
+    }
     dtStrs[0][1] -= 1;
     dtStrs[2] = dtStrs[2].split(":").map((v) => parseInt(v));
 
@@ -292,18 +295,22 @@ class LMSScraperClient extends MJUScraperClient {
       $ = this.loadCheerioFromResData();
       const anncmnts = [];
 
-      if($("table.bbslist > tbody > tr > td").length === 1) {
+      if ($("table.bbslist > tbody > tr > td").length === 1) {
         return anncmnts;
       }
 
       $("table.bbslist > tbody > tr").each((i, tr) => {
+        const postId = parseInt($(tr).find("td:first-child").text().trim());
+
         anncmnts.push({
-          postId: parseInt($(tr).find("td:first-child").text().trim()),
+          postId: isNaN(postId) ? 0 : postId,
           title: $(tr).find("td.left > a > div:first-child").text().trim(),
-          url: $(tr).find("td.left").attr("onclick").split("'")[1],
+          boardUri: $(tr).find("td.left").attr("onclick").split("'")[1],
           uploadedAt: this.parseLmsDateTime(
             $(tr).find("td:last-child").text().trim()
           ),
+          isNew: $(tr).find("td.left").hasClass("unread_article"),
+          isFileAttached: $(tr).find("td:nth-child(4) > a > img").length > 0,
         });
       });
 
@@ -359,7 +366,7 @@ class LMSScraperClient extends MJUScraperClient {
 
       const assignments = [];
 
-      if($("table.bbslist > tbody > tr > td").length === 1) {
+      if ($("table.bbslist > tbody > tr > td").length === 1) {
         return assignments;
       }
 
@@ -367,15 +374,17 @@ class LMSScraperClient extends MJUScraperClient {
         const tds = $(tr).children();
         const score = $(tds[5]).text().trim();
         const points = $(tds[6]).text().trim();
+
         assignments.push({
-          postId: $(tds[0]).text(),
+          postId: parseInt($(tds[0]).text()),
           title: $(tds[2]).find("div.subjt_top").text(),
-          boardUrl: $(tds[2]).attr("onclick").split("'")[1],
-          isRead: $(tds[2]).attr("class").trim() === "",
+          boardUri: $(tds[2]).attr("onclick").split("'")[1],
+          isNew: $(tds[2]).hasClass("unread_article"),
           isInProgress: $(tds[3]).text() === "진행중",
           isSubmitted: $(tds[4]).find("img").attr("alt") === "제출",
           scorePerPoints:
-            score === "비공개" ? "공개 안 됨" : `${score}/${points}`,
+            score === "비공개" ? "공개 안 됨" : `${score} / ${points}`,
+          dueDateTime: this.parseLmsDateTime($(tds[7]).text().trim()),
         });
       });
 
@@ -415,10 +424,18 @@ class LMSScraperClient extends MJUScraperClient {
 
       const anncmnts = [];
 
-      $("td.left > a.site-link").each((i, e) => {
+      $("table.bbslist > tbody > tr").each((i, tr) => {
+        const postId = parseInt($(tr).find("td:first-child").text().trim());
+
         anncmnts.push({
-          title: $(e).text(),
-          url: $(e).attr("href"),
+          postId: isNaN(postId) ? 0 : postId,
+          title: $(tr).find("td.left > a").text().trim(),
+          boardUri: $(tr).find("td.left > a").attr("href"),
+          uploadedAt: this.parseLmsDateTime(
+            $(tr).find("td:nth-child(4)").text().trim()
+          ),
+          isNew: $(tr).find("td.left").hasClass("unread_article"),
+          isFileAttached: $(tr).find("td:nth-child(3) > a").length > 0,
         });
       });
 
