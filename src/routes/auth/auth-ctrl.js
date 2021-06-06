@@ -337,7 +337,7 @@ authCtrl.editSetting = async (req, res) => {
       updateOption.toggleDarkMode = toggleDarkMode;
     }
 
-    await User.update(updateOption, { where: { id } });
+    await UserSetting.update(updateOption, { where: { id } });
 
     res.status(200).send(onChangeFlags);
   } catch (err) {
