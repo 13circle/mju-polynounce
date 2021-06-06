@@ -11,26 +11,29 @@ async function sendNotification(userId) {
   try {
     await serviceQueue.initTable();
 
-    serviceQueue.addServiceToUser(userId, delay);
-
-    serviceQueue.runServices(async (userId) => {
-      try {
-        const user = await User.findByPk(userId);
-        const userSetting = await UserSetting.findOne({
-          where: {
-            UserId: userId,
-          },
-        });
-
-        if (user.isUserEmailVerified && userSetting.notifyByUserEmail) {
-          await user.sendNotification(true);
-        } else if (user.isMjuEmailVerified) {
-          await user.sendNotification(false);
-        }
-      } catch (err) {
-        console.error(err);
-      }
+    const userSetting = await UserSetting.findOne({
+      where: {
+        UserId: userId,
+      },
     });
+
+    if (userSetting.enableNotification) {
+      const user = await User.findByPk(userId);
+
+      serviceQueue.addServiceToUser(userId, delay);
+
+      serviceQueue.runServices(async (userId) => {
+        try {
+          if (user.isUserEmailVerified && userSetting.notifyByUserEmail) {
+            await user.sendNotification(true);
+          } else if (user.isMjuEmailVerified) {
+            await user.sendNotification(false);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    }
   } catch (err) {
     throw err;
   }
