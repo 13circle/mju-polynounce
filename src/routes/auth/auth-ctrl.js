@@ -176,6 +176,7 @@ authCtrl.edit = async (req, res) => {
       .pattern(/^[0-9]*$/)
       .optional(),
     studPwd: Joi.string().optional(),
+    majorDeptCode: Joi.string().alphanum().optional(),
     mjuEmail: Joi.string().email().optional(),
   });
 
