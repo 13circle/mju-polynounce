@@ -13,6 +13,7 @@ const { LMSCourse } = require("@models/LMSCourse");
 const { LMSCourseAnncmnt } = require("@models/LMSCourseAnncmnt");
 const { LMSCourseAssignment } = require("@models/LMSCourseAssignment");
 const { EclassCourse } = require("@models/EclassCourse");
+const { EclassStudent } = require("@models/EclassStudent");
 const { EclassCourseAnncmnt } = require("@models/EclassCourseAnncmnt");
 const { EclassCourseAssignment } = require("@models/EclassCourseAssignment");
 const { JW4DeptAnncmnt } = require("@models/JW4DeptAnncmnt");
@@ -322,6 +323,11 @@ async function updateData(userId) {
                   });
                   eclassCourse.setSerializedCourseTimes(courseTime);
                   await eclassCourse.save();
+
+                  await EclassStudent.create({
+                    EclassCourseId: eclassCourse.id,
+                    UserId: userId,
+                  });
                 } catch (err) {
                   const { original } = err;
                   if (original) {
@@ -454,6 +460,10 @@ async function updateData(userId) {
               break;
 
             case "JW4Dept":
+              if (!user.majorDeptCode) {
+                break;
+              }
+
               const jw4DeptClient = new JW4DeptScraperClient(
                 studId,
                 studPwd,
