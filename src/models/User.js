@@ -260,6 +260,9 @@ function initModel(sequelize) {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      majorDeptCode: {
+        type: DataTypes.STRING,
+      },
       mjuEmail: {
         type: DataTypes.STRING,
         unique: true,
@@ -285,4 +288,5 @@ function initModel(sequelize) {
 module.exports = {
   User,
   initModel,
+  foreignKeyCnt: 0,
 };
