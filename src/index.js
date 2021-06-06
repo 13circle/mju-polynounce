@@ -58,6 +58,10 @@ async function connectDB() {
       throw Error("SESSION_SECRET must be specified");
     }
 
+    if (NODE_ENV === "development") {
+      await sequelize.query("DROP TABLE IF EXISTS Session");
+    }
+
     app.use(
       session({
         key: "MJU_POLYNOUNCE_SESSION",
