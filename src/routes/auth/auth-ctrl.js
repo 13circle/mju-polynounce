@@ -3,6 +3,7 @@ const authCtrl = {};
 const Joi = require("joi");
 
 const { User } = require("@models/User");
+const { UserSetting } = require("@models/UserSetting");
 const jw4DeptCode = require("@config/jw4DeptCode");
 const initUser = require("@util/init-user");
 
@@ -261,6 +262,79 @@ authCtrl.edit = async (req, res) => {
 
         await user.sendEmailVerification(true);
       }
+    }
+
+    await User.update(updateOption, { where: { id } });
+
+    res.status(200).send(onChangeFlags);
+  } catch (err) {
+    res
+      .status(500)
+      .send(Error("Interal Server Error: Please contact to admin"));
+    throw err;
+  }
+};
+
+authCtrl.editSetting = async (req, res) => {
+  const schema = Joi.object({
+    enableNotification: Joi.boolean().optional(),
+    notifyByUserEmail: Joi.boolean().optional(),
+    updateInterval: Joi.number().integer().optional(),
+    toggleDarkMode: Joi.boolean().optional(),
+  });
+
+  const result = schema.validate(req.body);
+
+  if (result.error) {
+    delete result.error._original;
+    return res.status(400).send(result.error.details);
+  }
+
+  const {
+    enableNotification,
+    notifyByUserEmail,
+    updateInterval,
+    toggleDarkMode,
+  } = req.body;
+
+  const onChangeFlags = {
+    isEnableNotifChanged: false,
+    isNotifByUserMailChanged: false,
+    isUpdateIntervalChanged: false,
+    isToggleDarkModeChanged: false,
+  };
+
+  const updateOption = {};
+
+  const {
+    user: { id },
+  } = req;
+
+  try {
+    const userSetting = await UserSetting.findOne({
+      where: {
+        UserId: id,
+      },
+    });
+
+    if (userSetting.enableNotification !== enableNotification) {
+      onChangeFlags.isEnableNotifChanged = true;
+      updateOption.enableNotification = enableNotification;
+    }
+
+    if (userSetting.notifyByUserEmail !== notifyByUserEmail) {
+      onChangeFlags.isNotifByUserMailChanged = true;
+      updateOption.notifyByUserEmail = notifyByUserEmail;
+    }
+
+    if (userSetting.updateInterval !== updateInterval) {
+      onChangeFlags.isUpdateIntervalChanged = true;
+      updateOption.updateInterval = updateInterval;
+    }
+
+    if (userSetting.toggleDarkMode !== toggleDarkMode) {
+      onChangeFlags.isToggleDarkModeChanged = true;
+      updateOption.toggleDarkMode = toggleDarkMode;
     }
 
     await User.update(updateOption, { where: { id } });

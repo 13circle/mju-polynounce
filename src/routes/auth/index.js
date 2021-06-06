@@ -19,6 +19,7 @@ auth.delete("/logout", checkUser, authCtrl.logout);
 auth.post("/register", authCtrl.register);
 auth.post("/confirm-email/:token", authCtrl.confirmEmail);
 auth.put("/edit", checkUser, checkEmailVerified, authCtrl.edit);
+auth.put("/edit-setting", checkUser, checkEmailVerified, authCtrl.editSetting);
 auth.post("/send-password-reset", checkUser, checkEmailVerified, authCtrl.sendPasswordReset);
 auth.put("/reset-password/:token", authCtrl.resetPassword);
 auth.delete("/unregister", checkUser, authCtrl.unregister);
