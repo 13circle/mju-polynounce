@@ -187,7 +187,7 @@ authCtrl.edit = async (req, res) => {
     return res.status(400).send(result.error.details);
   }
 
-  const { userEmail, studId, studPwd, mjuEmail } = req.body;
+  const { userEmail, studId, studPwd, majorDeptCode, mjuEmail } = req.body;
   const { user } = req;
   const { id } = user;
 
@@ -197,6 +197,7 @@ authCtrl.edit = async (req, res) => {
       isMjuEmailChanged: false,
       isStudIdChanged: false,
       isStudPwdChanged: false,
+      isMajorDeptCodeChanged: false,
     };
     const updateOption = {};
 
@@ -204,11 +205,13 @@ authCtrl.edit = async (req, res) => {
     const prevStudId = user.studId;
     const prevStudPwd = user.decryptStudPassword();
     const prevMjuEmail = user.mjuEmail;
+    const prevMajorDeptCode = user.majorDeptCode;
 
     user.userEmail = userEmail;
     user.studId = studId;
     user.encryptStudPassword(studPwd);
     user.mjuEmail = mjuEmail;
+    user.majorDeptCode = majorDeptCode;
 
     const isStudValid = await user.checkStudAccount();
     if (!isStudValid) {
@@ -224,6 +227,11 @@ authCtrl.edit = async (req, res) => {
       if (prevStudPwd !== studPwd) {
         onChangeFlags.isStudPwdChanged = true;
         updateOption.studPwd = user.studPwd;
+      }
+
+      if (prevMajorDeptCode !== majorDeptCode) {
+        onChangeFlags.isMajorDeptCodeChanged = true;
+        updateOption.majorDeptCode = user.majorDeptCode;
       }
     }
 
