@@ -24,7 +24,7 @@ function initModel(sequelize) {
       updateInterval: {
         type: DataTypes.BIGINT,
         allowNull: false,
-        defaultValue: 60 * 60 * 1000,
+        defaultValue: 30 * 60 * 1000,
       },
       toggleDarkMode: {
         type: DataTypes.BOOLEAN,
