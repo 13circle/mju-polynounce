@@ -2,7 +2,6 @@ const ServiceQueue = require("@util/ServiceQueue");
 
 const { User } = require("@models/User");
 const { UserSetting } = require("@models/UserSetting");
-const { use } = require("../routes/anncmnt");
 
 const delay = 15000;
 
