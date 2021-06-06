@@ -14,6 +14,7 @@ auth.get("/register", authCtrl.registrationPage);
 auth.get("/confirm-email/:token", authCtrl.emailConfirmPage);
 auth.get("/reset-password/:token", authCtrl.passwordResetPage);
 
+auth.get("/check", authCtrl.check);
 auth.post("/login", passportAuth, checkEmailVerified, authCtrl.login);
 auth.delete("/logout", checkUser, authCtrl.logout);
 auth.post("/register", authCtrl.register);

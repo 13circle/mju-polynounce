@@ -42,6 +42,19 @@ authCtrl.logout = (req, res) => {
   });
 };
 
+authCtrl.check = async (req, res) => {
+  const { user } = req;
+  if (!user) {
+    return res.status(200).send({
+      isLogin: false,
+    });
+  }
+
+  res.status(200).send({
+    isLogin: true,
+  });
+};
+
 authCtrl.register = async (req, res) => {
   const schema = Joi.object({
     userEmail: Joi.string().email().required(),
