@@ -3,6 +3,7 @@ const authCtrl = {};
 const Joi = require("joi");
 
 const { User } = require("@models/User");
+const jw4DeptCode = require("@config/jw4DeptCode");
 const initUser = require("@util/init-user");
 
 authCtrl.loginPage = (req, res) => {
@@ -48,7 +49,10 @@ authCtrl.register = async (req, res) => {
       .pattern(/^[0-9]*$/)
       .required(),
     studPwd: Joi.string().required(),
-    majorDeptCode: Joi.string().alphanum().optional(),
+    majorDeptCode: Joi.string()
+      .alphanum()
+      .valid(Object.keys(jw4DeptCode))
+      .optional(),
     mjuEmail: Joi.string().email().optional(),
   });
 
@@ -59,7 +63,8 @@ authCtrl.register = async (req, res) => {
     return res.status(400).send(result.error.details);
   }
 
-  const { userEmail, userPwd, studId, studPwd, majorDeptCode, mjuEmail } = req.body;
+  const { userEmail, userPwd, studId, studPwd, majorDeptCode, mjuEmail } =
+    req.body;
 
   try {
     const user = await User.build({
@@ -176,7 +181,10 @@ authCtrl.edit = async (req, res) => {
       .pattern(/^[0-9]*$/)
       .optional(),
     studPwd: Joi.string().optional(),
-    majorDeptCode: Joi.string().alphanum().optional(),
+    majorDeptCode: Joi.string()
+      .alphanum()
+      .valid(Object.keys(jw4DeptCode))
+      .optional(),
     mjuEmail: Joi.string().email().optional(),
   });
 
