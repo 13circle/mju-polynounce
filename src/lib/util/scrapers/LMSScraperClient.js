@@ -118,14 +118,14 @@ class LMSScraperClient extends MJUScraperClient {
         const courseTitle = $(e).text().trim();
         const courseTitleStrs = courseTitle.replace(")", "").split("(");
         const courseName = courseTitleStrs[0];
-        const courseCode = courseTitleStrs[1].split("-").pop();
+        const courseNum = courseTitleStrs[1].split("-").pop();
 
         courses.push({
           courseName,
-          courseCode:
-            isNaN(parseInt(courseCode)) || courseCode.length !== 4
+          courseNum:
+            isNaN(parseInt(courseNum)) || courseNum.length !== 4
               ? null
-              : courseCode,
+              : courseNum,
           kjkey: $(e).parent().attr("onclick").split("'")[1],
         });
       });
