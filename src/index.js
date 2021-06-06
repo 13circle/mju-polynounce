@@ -78,6 +78,11 @@ async function connectDB() {
 (async () => {
   await connectDB();
 
+  if (NODE_ENV === "development") {
+    const ServiceQueue = require("@util/ServiceQueue");
+    await new ServiceQueue("INIT").deleteTable();
+  }
+
   app.use(passport.initialize());
   app.use(passport.session());
 
