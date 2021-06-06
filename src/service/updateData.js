@@ -25,6 +25,8 @@ const MyiwebScraperClient = require("@scrapers/MyiwebScraperClient");
 
 const jw4DeptCode = require("@config/jw4DeptCode");
 
+const sendNotification = require("./sendNotification");
+
 async function getMJUHomeAnncmnts(homeClient, methodName, homeAnncmntType) {
   let retData, p, tempData, tempRet;
 
@@ -504,6 +506,8 @@ async function updateData(userId) {
           },
         });
         serviceQueue.addServiceToUser(userId, userSetting.updateInterval);
+
+        await sendNotification(userId);
       } catch (err) {
         console.error(err);
         throw err;

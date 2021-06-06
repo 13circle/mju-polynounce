@@ -161,7 +161,8 @@ class User extends Model {
         to: isMjuEmail ? this.mjuEmail : this.userEmail,
         subject: "[MJU Polynounce] 이메일 인증 안내",
         html: `
-          <h1>[MJU Polynounce] 이메일 인증 안내</h1>
+          <h1>[MJU Polynounce]</h1>
+          <h2>이메일 인증 안내</h2>
           <br/>
           <hr/>
           <br/>
@@ -205,7 +206,8 @@ class User extends Model {
         to: this.userEmail,
         subject: "[MJU Polynounce] 비밀번호 변경 안내",
         html: `
-          <h1>[MJU Polynounce] 비밀번호 변경 안내</h1>
+          <h1>[MJU Polynounce]</h1>
+          <h2>비밀번호 변경 안내</h2>
           <br/>
           <hr/>
           <br/>
@@ -216,6 +218,49 @@ class User extends Model {
             target="_blank"
           >
             비밀번호 변경하기
+          </a><br/>
+          <br/>
+          <hr/>
+          <br/>
+          <p>본 메일은 MJU Polynounce에서 발신되었습니다.</p>
+          <p>이 메일을 요청한 적이 없으시다면 아래의 메일로 알려주시면 감사하겠습니다.</p>
+          <br/>
+          <a href="mailto:13circle97@gmail.com">13circle97@gmail.com</a>
+          <br/>
+        `,
+      };
+
+      transporter.sendMail(mailerOptions, (err, info) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  sendNotification(useUserEmail) {
+    return new Promise((resolve, reject) => {
+      const mailerOptions = {
+        from: MAILER_EMAIL,
+        to: useUserEmail ? this.userEmail : this.mjuEmail,
+        subject: `[MJU Polynounce] 정보 갱신 현황 보고`,
+        html: `
+          <h1>[MJU Polynounce]</h1>
+          <h2>정보 갱신 현황 보고</h2>
+          <br/>
+          <hr/>
+          <br/>
+          <p>방금 전에 최신 정보로 갱신되었습니다.</p>
+          <br/>
+          <p>방문하셔서 확인 부탁드리겠습니다.</p>
+          <br/>
+          <a 
+            href="${BASE_URL}"
+            target="_blank"
+          >
+            MJU Polynounce 바로가기
           </a><br/>
           <br/>
           <hr/>
