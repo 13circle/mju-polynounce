@@ -51,7 +51,7 @@ authCtrl.register = async (req, res) => {
     studPwd: Joi.string().required(),
     majorDeptCode: Joi.string()
       .alphanum()
-      .valid(Object.keys(jw4DeptCode))
+      .valid(...Object.keys(jw4DeptCode))
       .optional(),
     mjuEmail: Joi.string().email().optional(),
   });
@@ -183,7 +183,7 @@ authCtrl.edit = async (req, res) => {
     studPwd: Joi.string().optional(),
     majorDeptCode: Joi.string()
       .alphanum()
-      .valid(Object.keys(jw4DeptCode))
+      .valid(...Object.keys(jw4DeptCode))
       .optional(),
     mjuEmail: Joi.string().email().optional(),
   });
