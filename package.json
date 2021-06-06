@@ -22,7 +22,8 @@
     "@util": "src/lib/util",
     "@mw": "src/lib/mw",
     "@config": "src/lib/config",
-    "@scrapers": "src/lib/util/scrapers"
+    "@scrapers": "src/lib/util/scrapers",
+    "@service": "src/service"
   },
   "license": "ISC",
   "dependencies": {
