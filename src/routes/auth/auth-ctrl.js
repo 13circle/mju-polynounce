@@ -3,6 +3,7 @@ const authCtrl = {};
 const Joi = require("joi");
 
 const { User } = require("@models/User");
+const initUser = require("@util/init-user");
 
 authCtrl.loginPage = (req, res) => {
   res.status(200).render("auth/login.html");
@@ -47,6 +48,7 @@ authCtrl.register = async (req, res) => {
       .pattern(/^[0-9]*$/)
       .required(),
     studPwd: Joi.string().required(),
+    majorDeptCode: Joi.string().alphanum().optional(),
     mjuEmail: Joi.string().email().optional(),
   });
 
@@ -57,7 +59,7 @@ authCtrl.register = async (req, res) => {
     return res.status(400).send(result.error.details);
   }
 
-  const { userEmail, userPwd, studId, studPwd, mjuEmail } = req.body;
+  const { userEmail, userPwd, studId, studPwd, majorDeptCode, mjuEmail } = req.body;
 
   try {
     const user = await User.build({
@@ -65,6 +67,7 @@ authCtrl.register = async (req, res) => {
       userPwd: "",
       studId,
       studPwd,
+      majorDeptCode,
       mjuEmail,
     });
 
@@ -84,6 +87,8 @@ authCtrl.register = async (req, res) => {
     if (mjuEmail) {
       await user.sendEmailVerification(true);
     }
+
+    await initUser(user.id);
 
     res.status(200).send(user.serialize());
   } catch (err) {
