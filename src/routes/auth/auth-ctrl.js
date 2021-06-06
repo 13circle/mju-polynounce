@@ -222,7 +222,7 @@ authCtrl.edit = async (req, res) => {
     user.mjuEmail = mjuEmail;
     user.majorDeptCode = majorDeptCode;
 
-    const isStudValid = await user.checkStudAccount();
+    const isStudValid = await User.checkStudAccount(studId, studPwd);
     if (!isStudValid) {
       return res.status(401).send({
         error: "INVALID_STUD_ACCOUNT",
