@@ -109,7 +109,7 @@ authCtrl.register = async (req, res) => {
 
     await initUser(user.id);
 
-    res.status(200).send(user.serialize());
+    res.redirect("/");
   } catch (err) {
     const { original } = err;
 
