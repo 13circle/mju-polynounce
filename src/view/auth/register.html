@@ -1,70 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="/static/image/icon/favicon.ico" type="image/x-icon" />
-  <link rel="icon" href="/static/image/icon/favicon.ico" type="image/x-icon" />
-  <link rel="stylesheet" href="/static/css/main.css" />
-  <script src="/static/js/jquery-3.6.0.min.js"></script>
-  <script src="/static/js/main.js"></script>
-  <title>Register | MJU PolyNounce</title>
-</head>
-<body>
-  <header class="header">
-    <h2 class="logo">
-      <a href="/">MJU Polynounce</a>
-    </h2>
-    <div>
-      <a href="/auth/login" class="link-btn">로그인</a>
-      <a href="/auth/register" class="link-btn">회원가입</a>
-      <a href="#" class="link-btn inactive">로그아웃</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="shortcut icon"
+      href="/static/image/icon/favicon.ico"
+      type="image/x-icon"
+    />
+    <link
+      rel="icon"
+      href="/static/image/icon/favicon.ico"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="/static/css/main.css" />
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#loginForm").submit(function (e) {
+          e.preventDefault();
+
+          var mjuEmail = $("#mjuEmail").val();
+          $.ajax({
+            url: "/auth/register",
+            method: "post",
+            data: {
+              userEmail: $("#userEmail").val(),
+              userPwd: $("#userPwd").val(),
+              studId: $("#studId").val(),
+              studPwd: $("#studPwd").val(),
+              majorDeptCode: $("#majorDeptCode").val(),
+              mjuEmail: mjuEmail === "" ? undefined : mjuEmail,
+            },
+            success: function (data, status, xhr) {
+              location.href = "/";
+            },
+            error: function (xhr, status, err) {
+              var res = xhr.responseJSON;
+              if (xhr.status === 400) {
+                var messages = "";
+                for (var i in res) {
+                  var message = res[i].message;
+                  var prop = message.split('"')[1];
+                  messages += message.replace(
+                    prop,
+                    $("label[for=" + prop + "]").text()
+                  );
+                  +"\n";
+                }
+                alert(messages);
+              } else {
+                alert(JSON.stringify(res, null, 2));
+              }
+            },
+          });
+        });
+      });
+    </script>
+    <title>Register | MJU PolyNounce</title>
+  </head>
+  <body>
+    <header class="header">
+      <h2 class="logo">
+        <a href="/">MJU Polynounce</a>
+      </h2>
+      <div>
+        <a href="/auth/login" class="link-btn">로그인</a>
+        <a href="/auth/register" class="link-btn">회원가입</a>
+        <a href="#" class="link-btn inactive">로그아웃</a>
+      </div>
+    </header>
+    <div class="container">
+      <form
+        id="loginForm"
+        method="POST"
+        action="/auth/register"
+        class="m-5 input-form"
+      >
+        <h1 class="input-title">User Registration</h1>
+        <div class="input-wrapper">
+          <label for="userEmail">이메일</label>
+          <input class="input" id="userEmail" type="email" />
+        </div>
+        <div class="input-wrapper">
+          <label for="userPwd">비밀번호</label>
+          <input class="input" id="userPwd" type="password" />
+        </div>
+        <div class="input-wrapper">
+          <label for="studId">명지대 학번</label>
+          <input class="input" id="studId" type="text" />
+        </div>
+        <div class="input-wrapper">
+          <label for="studPwd">명지대 비밀번호</label>
+          <input class="input" id="studPwd" type="password" />
+        </div>
+        <div class="input-wrapper">
+          <label for="majorDeptCode">학과 (일부 학과만 선택 가능)</label>
+          <select class="input" id="majorDeptCode">
+            <option value="" selected>해당 사항 없음</option>
+            <option value="kll">국어국문학과</option>
+            <option value="english">영어영문학과</option>
+            <option value="lis">문헌정보학과</option>
+            <option value="arab">아랍지역학과</option>
+            <option value="writers">문예창작학과</option>
+            <option value="lanp">법무정책학과</option>
+            <option value="math">수학과</option>
+            <option value="physics">물리학과</option>
+            <option value="ee">전자공학과</option>
+            <option value="3e">환경에너지공학과</option>
+            <option value="civil">토목환경공학과</option>
+            <option value="mjtrans">교통공학과</option>
+            <option value="cs">컴퓨터공학과</option>
+            <option value="phyedu">스포츠학부</option>
+          </select>
+        </div>
+        <div class="input-wrapper">
+          <label for="mjuEmail">명지대 이메일</label>
+          <input id="mjuEmail" type="email" class="input" />
+        </div>
+        <button type="submit">가입하기</button>
+      </form>
     </div>
-  </header>
-  <form id="loginForm" method="POST" action="/auth/register" class="m-5">
-    <h1>User Registration</h1>
-    <div>
-      <label>이메일</label>
-      <input name="userEmail" type="email" />
-    </div>
-    <div>
-      <label>비밀번호</label>
-      <input name="userPwd" type="password" />
-    </div>
-    <div>
-      <label>명지대 학번</label>
-      <input name="studId" type="text" />
-    </div>
-    <div>
-      <label>명지대 비밀번호</label>
-      <input name="studPwd" type="password" />
-    </div>
-    <div>
-      <label>학과 (일부 학과만 선택 가능)</label>
-      <select name="majorDeptCode">
-        <option value="" selected>해당 사항 없음</option>
-        <option value="kll">국어국문학과</option>
-        <option value="english">영어영문학과</option>
-        <option value="lis">문헌정보학과</option>
-        <option value="arab">아랍지역학과</option>
-        <option value="writers">문예창작학과</option>
-        <option value="lanp">법무정책학과</option>
-        <option value="math">수학과</option>
-        <option value="physics">물리학과</option>
-        <option value="ee">전자공학과</option>
-        <option value="3e">환경에너지공학과</option>
-        <option value="civil">토목환경공학과</option>
-        <option value="mjtrans">교통공학과</option>
-        <option value="cs">컴퓨터공학과</option>
-        <option value="phyedu">스포츠학부</option>
-      </select>
-    </div>
-    <div>
-      <label>명지대 이메일</label>
-      <input name="mjuEmail" type="email" />
-    </div>
-    <button type="submit">가입하기</button>
-  </form>
-</body>
+  </body>
 </html>

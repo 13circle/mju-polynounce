@@ -1,16 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="/static/image/icon/favicon.ico" type="image/x-icon" />
-  <link rel="icon" href="/static/image/icon/favicon.ico" type="image/x-icon" />
-  <script src="/static/js/jquery-3.6.0.min.js"></script>
-  <title>Login | MJU PolyNounce</title>
-</head>
-<body>
-  <!-- TODO: Login Form -->
-  <h1>Login</h1>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="shortcut icon"
+      href="/static/image/icon/favicon.ico"
+      type="image/x-icon"
+    />
+    <link
+      rel="icon"
+      href="/static/image/icon/favicon.ico"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="/static/css/main.css" />
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <script src="/static/js/main.js"></script>
+    <title>Login | MJU PolyNounce</title>
+  </head>
+  <body>
+    <header class="header">
+      <h2 class="logo">
+        <a href="/">MJU Polynounce</a>
+      </h2>
+      <div>
+        <a href="/auth/login" class="link-btn">로그인</a>
+        <a href="/auth/register" class="link-btn">회원가입</a>
+        <a href="#" class="link-btn inactive">로그아웃</a>
+      </div>
+    </header>
+    <div class="container">
+      <form
+        id="loginForm"
+        method="POST"
+        action="/auth/login"
+        class="m-5 input-form"
+      >
+        <h1 class="input-title">Login</h1>
+        <div class="input-wrapper">
+          <label for="userEmail">이메일</label>
+          <input name="userEmail" type="email" class="input" />
+        </div>
+        <div class="input-wrapper">
+          <label for="userPwd">비밀번호</label>
+          <input name="userPwd" type="password" class="input" />
+        </div>
+        <button type="submit">LOGIN</button>
+      </form>
+    </div>
+  </body>
 </html>

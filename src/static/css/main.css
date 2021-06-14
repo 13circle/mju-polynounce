@@ -1,0 +1,145 @@
+@font-face {
+  font-family: "GmarketSansLight";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "GmarketSansMedium";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "GmarketSansBold";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  position: relative;
+  font-family: GmarketSansLight;
+  height: 100vh;
+}
+
+.header {
+  display: flex;
+  height: 7vh;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgb(90, 89, 143);
+  padding: 0.5em 1em;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+}
+
+.logo {
+  font-family: GmarketSansBold;
+  padding: 0.5em;
+}
+.logo > * {
+  color: inherit;
+  text-decoration: inherit;
+}
+.logo:hover {
+  color: white;
+  background-color: black;
+  transition: color 0.3s, background-color 0.3s;
+}
+
+.link-btn {
+  font-family: GmarketSansMedium;
+  color: inherit;
+  text-decoration: inherit;
+  padding: 0.5em;
+  background-color: white;
+  border: 2px solid black;
+}
+.link-btn:hover {
+  color: white;
+  background-color: black;
+  transition: color 0.3s, background-color 0.3s;
+}
+
+.inactive {
+  display: none;
+}
+
+.m-1 {
+  margin: 0.5em;
+}
+
+.m-5 {
+  margin: 2.5em;
+}
+
+.anncmnts {
+  border-collapse: collapse;
+  border: 1px solid black;
+  overflow: scroll;
+}
+
+.anncmnts td,
+th {
+  border: 1px solid black;
+}
+
+.input-form {
+  width: 25em;
+}
+
+.input-form > .input-title {
+  font-family: GmarketSansBold;
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+.input-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 1em 0em;
+}
+
+.input-wrapper > label {
+  font-family: GmarketSansMedium;
+  cursor: pointer;
+}
+
+.input-wrapper > .input {
+  width: 40%;
+  height: 2em;
+}
+
+button[type="submit"] {
+  font-family: GmarketSansBold;
+  width: 100%;
+  height: 3em;
+  border-radius: 1em;
+  cursor: pointer;
+  background-color: white;
+  border: 2px solid black;
+  margin-top: 1em;
+}
+button[type="submit"]:hover {
+  color: white;
+  background-color: black;
+  transition: color 0.3s, background-color 0.3s;
+}
