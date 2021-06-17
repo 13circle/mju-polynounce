@@ -26,6 +26,7 @@ const MyiwebScraperClient = require("@scrapers/MyiwebScraperClient");
 
 const jw4DeptCode = require("@config/jw4DeptCode");
 
+const MJUHomeService = require("./scrapers/MJUHomeService");
 const sendNotification = require("./sendNotification");
 
 async function getMJUHomeAnncmnts(homeClient, methodName, homeAnncmntType) {
@@ -103,6 +104,8 @@ async function updateData(userId) {
 
           switch (boardType) {
             case "MJUHome":
+              await MJUHomeService(studId, studPwd);
+              /*
               const homeClient = new MJUHomeScraperClient(studId, studPwd);
               await homeClient.initSSOclient();
 
@@ -132,6 +135,7 @@ async function updateData(userId) {
                 "getCareerAnncmntsPerPage",
                 5
               );
+              //*/
               break;
 
             case "Myiweb":
